@@ -36,6 +36,7 @@ function checkCoin(colorDesc, txId, outIndex, pubKey, cb) {
   var bs = wallet.getBlockchain()
   var getTxFn = bs.getTx.bind(bs)
 
+  // check is colored
   var colorDefinition = wallet.getColorDefinitionManager().resolveByDesc(colorDesc)
   wallet.getColorData().getColorValue(txId, outIndex, colorDefinition, getTxFn, function(error, colorValue) {
     if (error)
@@ -44,10 +45,8 @@ function checkCoin(colorDesc, txId, outIndex, pubKey, cb) {
     if (colorValue === null)
       return cb(new Error('Coin ' + txId + ':' + outIndex + ' is not colored'))
 
-    if (wallet.getTxDb().getBlockHeightByTxId(txId) === undefined)
-      return cb(new Error('Coin ' + txId + ':' + outIndex + ' is not confirmed'))
-
-    getTxFn(txId, function(error, tx) {
+    // check pubKey
+    bs.getTx(txId, function(error, tx) {
       if (error)
         return cb(error)
 
@@ -57,7 +56,23 @@ function checkCoin(colorDesc, txId, outIndex, pubKey, cb) {
       if (bitcoin.ECPubKey.fromHex(pubKey).getAddress(network).toBase58Check() !== address)
         return cb(new Error('PubKey is not valid'))
 
-      cb(null)
+      // check is confirmed and unspent
+      bs.getUTXO(address, function(error, utxo) {
+        if (error)
+          return cb(error)
+
+        utxo = utxo.filter(function(coin) {
+          return (coin.txId === txId && coin.outIndex === outIndex)
+        })
+
+        if (utxo.length === 0)
+          return cb(new Error('Coin not found'))
+
+        if (utxo[0].confirmations === 0)
+          return cb(new Error('Coin is not confirmed'))
+
+        cb(null)
+      })
     })
   })
 }
