@@ -1,0 +1,32 @@
+{
+  "name": "cc-wallet-engine",
+  "version": "0.0.1",
+  "description": "",
+  "main": "./src/index.js",
+  "keywords": [],
+  "contributors": [
+    {
+      "name": "Fomichev Kirill",
+      "email": "fanatid@ya.ru"
+    }
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/fanatid/chromaclubjs-chat"
+  },
+  "dependencies": {
+    "cc-wallet-core": "git://github.com/chromaway/cc-wallet-core.git",
+    "coloredcoinjs-lib": "git://github.com/chromaway/coloredcoinjs-lib.git",
+    "express": "4.9.5",
+    "optimist": "0.6.1",
+    "socket.io": "1.1.0"
+  },
+  "devDependencies": {
+    "bitcoinjs-lib": "^1.1.4",
+    "grunt": "0.4.5",
+    "grunt-browserify": "3.0.1",
+    "grunt-contrib-clean": "0.6.0",
+    "grunt-contrib-jshint": "0.10.0",
+    "grunt-contrib-uglify": "0.6.0"
+  }
+}
